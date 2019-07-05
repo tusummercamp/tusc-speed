@@ -19,6 +19,7 @@ public class LambdaHandler implements RequestHandler<APIGatewayProxyRequestEvent
 		JSONObject body = new JSONObject(input.getBody());
 		String foo = body.getString("foo");
 		Integer baz = body.getInt("baz");
+		String speed = body.getString("speed");
 		
 		// log body
 		logger.log("Received request");
