@@ -21,13 +21,14 @@ public class LambdaTester {
 		
 		// create request
 		APIGatewayProxyRequestEvent request = new APIGatewayProxyRequestEvent();
-		request.setHttpMethod("get");
+		request.setHttpMethod("POST");
 		request.setBody(requestBody.toString());
 		request.setPath("/path");
-		
-		// create handler
+	
+		// create handler	
 		LambdaHandler handler = new LambdaHandler();
 		APIGatewayProxyResponseEvent response = handler.handleRequest(request, new TestLambdaContext());
+	
 
 	}
 
