@@ -3,6 +3,7 @@ package com.visteoncloud.tusc.sample;
 import java.util.List;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,7 +14,13 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.BatchWriteItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.TableWriteItems;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.utils.NameMap;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.WriteRequest;
 
 
@@ -63,6 +70,45 @@ public class DBClient {
 			
 		} while (outcome.getUnprocessedItems().size() > 0);
 		
+	}
+
+	public HashMap<BigInteger, Float> getItems(String user, BigInteger from, BigInteger to) {
+
+		Table table = dynamoDB.getTable(tableName);
+		long startDate = new Date(from.longValue() * 1000).getTime() / 1000;
+		long endDate = new Date(to.longValue() * 1000).getTime() / 1000;
+
+		QuerySpec query = new QuerySpec();
+		query.withProjectionExpression("#k_time, #k_value");
+		query.withKeyConditionExpression("#k_user = :v_user and #k_time >= :v_start");
+		query.withNameMap(new NameMap()
+			.with("#k_user", "User")
+			.with("#k_time", "Time")
+			.with("#k_value", "Value"));
+		query.withValueMap(new ValueMap()
+			.withString(":v_user", user)
+			.withNumber(":v_start", startDate));
+
+		// echo parameters
+		System.out.println("Start date: " + startDate);
+		System.out.println("End date: " + endDate);
+
+		// execute query
+		ItemCollection<QueryOutcome> items = table.query(query);
+		
+		// process results
+		HashMap<BigInteger, Float> returnValue = new HashMap<BigInteger, Float>();
+		Iterator<Item> it = items.iterator();
+		while(it.hasNext()) {
+			Item item = it.next();
+			BigInteger time = item.getBigInteger("Time");
+			if (time.longValue() < endDate) {
+				returnValue.put(time, item.getFloat("Value"));
+			}
+		}
+
+		return returnValue;
+
 	}
 	
 }
