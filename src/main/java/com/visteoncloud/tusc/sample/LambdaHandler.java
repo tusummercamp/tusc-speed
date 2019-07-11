@@ -17,7 +17,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 
 public class LambdaHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent>  {
 	
-	final static String USER_ID = "Demo user";
+	final static String USER_ID = "Milosh";
 	static DBClient dbClient = null;
 
 	public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context) {
@@ -53,6 +53,14 @@ public class LambdaHandler implements RequestHandler<APIGatewayProxyRequestEvent
 			responseBody.put("errorMessage", "Unsupported method: " + method);
 			response.setBody(responseBody.toString());
 		}
+		
+		// CORS
+		HashMap<String, String> headers = new HashMap<String, String>();
+		headers.put("Access-Control-Allow-Origin", "*");
+		headers.put("Access-Control-Allow-Methods", "*");
+		headers.put("Access-Control-Allow-Headers", "*");
+		headers.put("Access-Control-Max-Age", "86400");
+		response.setHeaders(headers);
 		
 		return response;
 	}
@@ -92,6 +100,14 @@ public class LambdaHandler implements RequestHandler<APIGatewayProxyRequestEvent
 			response.setStatusCode(400);
 			response.setBody(responseBody.toString());
 		}
+		
+		// CORS
+		HashMap<String, String> headers = new HashMap<String, String>();
+		headers.put("Access-Control-Allow-Origin", "*");
+		headers.put("Access-Control-Allow-Methods", "*");
+		headers.put("Access-Control-Allow-Headers", "*");
+		headers.put("Access-Control-Max-Age", "86400");
+		response.setHeaders(headers);
 		
 		return response;
 	}
@@ -133,6 +149,13 @@ public class LambdaHandler implements RequestHandler<APIGatewayProxyRequestEvent
 
 		}
 		
+		// CORS
+		HashMap<String, String> headers = new HashMap<String, String>();
+		headers.put("Access-Control-Allow-Origin", "*");
+		headers.put("Access-Control-Allow-Methods", "*");
+		headers.put("Access-Control-Allow-Headers", "*");
+		headers.put("Access-Control-Max-Age", "86400");
+		response.setHeaders(headers);
 		
 		return response;
 	}
